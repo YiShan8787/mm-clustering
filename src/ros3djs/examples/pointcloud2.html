@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+
+<script src="https://static.robotwebtools.org/threejs/current/three.js"></script>
+<script src="https://static.robotwebtools.org/EventEmitter2/current/eventemitter2.min.js"></script>
+<script src="https://static.robotwebtools.org/roslibjs/current/roslib.js"></script>
+<script src="../build/ros3d.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
+
+<link rel='stylesheet' href='https://use.fontawesome.com/releases/v5.3.1/css/all.css'><link rel="stylesheet" href="./style.css">
+
+<script>
+  /**
+   * Setup all visualization elements when the page is loaded.
+   */
+  var scene;
+  function init() {
+    // Connect to ROS.
+    var ros = new ROSLIB.Ros({
+      url : 'ws://localhost:9090'
+    });
+
+    // Create the main viewer.
+    var viewer = new ROS3D.Viewer({
+      divID : 'viewer',
+      width : 520,
+      height : 705,
+      cameraPosition : {x:6,y:8,z:10},
+      antialias : true,
+      useAxis: false
+    });
+    scene = viewer;
+    viewer.addObject(new ROS3D.Grid());
+    // Setup a client to listen to TFs.
+    var tfClient = new ROSLIB.TFClient({
+      ros : ros,
+      angularThres : 0.01,
+      transThres : 0.01,
+      rate : 10.0,
+      fixedFrame : '/map'
+    });
+
+    var cloudClient = new ROS3D.PointCloud2({
+        ros: ros,
+        tfClient: tfClient,
+        rootObject: viewer.scene,
+        topic: '/my_pcl_topic',
+        material: { size: 0.1, color: 0xeeeeee },
+        colorsrc: 'rgb'
+    });
+
+    function decode64(inbytes, outbytes, record_size, pointRatio) {
+    var x,b=0,l=0,j=0,L=inbytes.length,A=outbytes.length;
+    record_size = record_size || A; // default copies everything (no skipping)
+    pointRatio = pointRatio || 1; // default copies everything (no skipping)
+    var bitskip = (pointRatio-1) * record_size * 8;
+    for(x=0;x<L&&j<A;x++){
+        b=(b<<6)+decode64.e[inbytes.charAt(x)];
+        l+=6;
+        if(l>=8){
+            l-=8;
+            outbytes[j++]=(b>>>l)&0xff;
+            if((j % record_size) === 0) { // skip records
+                // no    optimization: for(var i=0;i<bitskip;x++){l+=6;if(l>=8) {l-=8;i+=8;}}
+                // first optimization: for(;l<bitskip;l+=6){x++;} l=l%8;
+                x += Math.ceil((bitskip - l) / 6);
+                l = l % 8;
+                if(l>0){b=decode64.e[inbytes.charAt(x)];}
+            }
+        }
+    }
+    return Math.floor(j/record_size);
+    }
+    // initialize decoder with static lookup table 'e'
+    decode64.S='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    decode64.e={};
+    for(var i=0;i<64;i++){decode64.e[decode64.S.charAt(i)]=i;}
+
+    var listener = new ROSLIB.Topic({
+      ros: ros,
+      //name : '/listener',
+      name: '/my_pcl_topic',
+      messageType: 'sensor_msgs/PointCloud2'
+    });
+
+    listener.subscribe(function (message) {
+      var buffer = null
+      var bufSz = 10000 * message.point_step
+      var pointRatio = 1
+      //console.log(message)
+      if (message.data.buffer) {
+        buffer = message.data.slice(0, Math.min(message.data.byteLength, bufSz));
+        n = message.height*message.width ;
+      } else {
+        if (!buffer || buffer.byteLength < bufSz) {
+          buffer = new Uint8Array(bufSz);
+        }
+        n = decode64(message.data, buffer, message.point_step, 1);
+        pointRatio = 1;
+      }
+      var dv = new DataView(buffer.buffer);
+      var littleEndian = !message.is_bigendian;
+      var x = message.fields[0].offset;
+      var y = message.fields[1].offset;
+      var z = message.fields[2].offset;
+      var base, color;
+      console.log(dv)
+      for(var i = 0; i < n; i++){
+        base = i * pointRatio * message.point_step;
+        //console.log(dv.getFloat32(base+x, littleEndian))
+        //console.log(dv.getFloat32(base+y, littleEndian))
+        //console.log(dv.getFloat32(base+z, littleEndian))
+        
+      }
+    //n = decode64(message.data, this.buffer, message.point_step, pointRatio = 1);
+    //console.log('listener:')
+    //console.log(n)
+    //console.log('listener:')
+    //console.log(message)
+    // If desired, we can unsubscribe from the topic as well.
+    //listener.unsubscribe();
+      
+    });
+    
+    
+  }
+
+  function draw_point(x,y,z,radius,color)
+  {
+    //var sphereGeometry = new THREE.SphereGeometry( radius )
+    //var sphereMaterial = new THREE.MeshBasicMaterial( {color: color} )
+    //var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial)
+    //sphere.position.set(x, y, z)
+
+    /*
+    var geom = new THREE.BufferGeometry()
+    var positions = new THREE.BufferAttribute( new THREE.Vector3( 0, 0, 0), 3, false )
+    var colors = new THREE.BufferAttribute( new THREE.Vector3( 0, 0, 0), 3, false )
+    geom.addAttribute( 'position', positions.setDynamic(true) )
+    geom.addAttribute( 'color', colors.setDynamic(true) )
+    var mat = { size: 1.0}
+    var material = new THREE.PointsMaterial(mat)
+    var sphere =  new THREE.Points( geom, material );
+    */
+
+    /*
+    var dotGeometry = new THREE.Geometry();
+    dotGeometry.vertices.push(new THREE.Vector3( 0, 0, 0));
+    var dotMaterial = new THREE.PointsMaterial( { size: 0.1, sizeAttenuation: true } );
+    var sphere = new THREE.Points( dotGeometry, dotMaterial );
+    */
+
+    /*
+    var vertices = []
+    vertices.push( x, y, z )
+    var geometry = new THREE.BufferGeometry();
+    geometry.addAttribute( 'position', new THREE.Float32BufferAttribute( vertices, 3 ) );
+    var material = new THREE.PointsMaterial( { size: 0.5,color: 0x888888 } );
+    var sphere = new THREE.Points( geometry, material );
+    */
+    var geometry = new THREE.ConeGeometry( 0.2, 0.2, 32 );
+    var material = new THREE.MeshBasicMaterial( {color: 0x0000ff} );
+    var sphere = new THREE.Mesh( geometry, material );
+
+    sphere.rotation.z = -Math.PI / 2;
+    sphere.position.set(x, y, z)
+    //sphere.rotation.set(new THREE.Vector3( 0, 0, Math.PI / 2))
+    scene.addObject(sphere)
+  }
+
+  function select_to_draw() 
+  {
+    var camera = document.forms['camera']
+    var x =camera.elements.exampleInputX.value
+    var y =camera.elements.exampleInputY.value
+    var z =camera.elements.exampleInputZ.value
+    //console.log(x + ',' + y + ',' + z)
+    draw_point(x,y,z,0.5,0xff0000)
+  }
+
+  
+  
+
+</script>
+
+</head>
+
+<body onload="init()">
+  
+  
+    <nav class="navbar navbar-dark bg-dark navbar-expand-sm">
+      <a class="navbar-brand" href="#">
+        
+        RosWebDemo
+      </a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-list-3" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbar-list-3">
+        <ul class="navbar-nav">
+            <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              How To Use
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+              <a class="dropdown-item" href="#" data-toggle="modal" data-target="#exampleModal">Action</a>
+            </div>
+          </li>   
+        </ul>
+      </div>
+    </nav>
+  <div class="container">
+    <div class="row">
+      <h1>simple pcl2 demo
+    </div>
+    <div class="row">
+      <div class="col">
+        <div id="viewer"></div>
+      </div>
+      <div class="col">
+        <!-- camera -->
+        <div class="row">
+          <button class="btn" onclick="add_camera()" data-toggle="popover" data-placement="right" title="Add Point" data-content="put the camera/radar position at the point"><i class="fa fa-camera" aria-hidden="true"></i></button>
+        </div>
+
+        
+        
+      </div>
+    </div>
+    
+  
+  
+
+      <!-- Modal action-->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Run the following commands in the terminal then refresh the page</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <ol>
+              <li><tt>roscore</tt></li>
+              <li><tt>roslaunch rosbridge_server rosbridge_websocket.launch</tt></li>
+              <li><tt>rosrun tf2_web_republisher tf2_web_republisher</tt></li>
+            </ol>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+            
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal camera-->
+    <div class="modal fade" id="cameraModal" tabindex="-1" role="dialog" aria-labelledby="cameraModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="cameraModalLabel">Run the following commands in the terminal then refresh the page</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form name='camera'>
+              
+              <div class="form-group">
+                <label for="exampleInputX">X</label>
+                <input type="text" class="form-control" id="exampleInputX" placeholder="0">
+              </div>
+              <div class="form-group">
+                <label for="exampleInputY">Y</label>
+                <input type="text" class="form-control" id="exampleInputY" placeholder="0">
+              </div>
+              <div class="form-group">
+                <label for="exampleInputZ">Z</label>
+                <input type="text" class="form-control" id="exampleInputZ" placeholder="0">
+              </div>
+
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" onclick="select_to_draw()" class="btn btn-primary" data-dismiss="modal" >Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+  </div>
+  </ul> 
+   <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+
+   <script>
+    $(document).ready(function(){
+      $('[data-toggle="popover"]').popover({ trigger: "hover" });   
+      
+      
+
+    });
+
+    function add_camera(){
+        clear_input_camera()
+        $('#cameraModal').modal('show')
+    }
+    function clear_input_camera(){
+      $('#cameraModal').find('form')[0].reset();
+    }
+    </script>
+   
+</body>
+</html>
