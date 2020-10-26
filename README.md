@@ -1,7 +1,7 @@
-## mm-clustering
+# mm-clustering
 for ti-mmwave human behavior clustering
 
-## Quick Start
+# Quick Start
 export ROS_DISTRO=kinetic               # Set this to your distro, e.g. kinetic or melodic
 source /opt/ros/$ROS_DISTRO/setup.bash  # Source your ROS distro 
 mkdir -p ~/mmcluster_ws/src                # Make a new workspace 
