@@ -33,7 +33,7 @@
       height : 705,
       cameraPosition : {x:6,y:8,z:10},
       antialias : true,
-      useAxis: false
+      useAxis: true
     });
     scene = viewer;
     viewer.addObject(new ROS3D.Grid());
@@ -51,7 +51,7 @@
         tfClient: tfClient,
         rootObject: viewer.scene,
         topic: '/my_pcl_topic',
-        material: { size: 0.1, color: 0xeeeeee },
+        material: { size: 0.2, color: 0xeeeeee },
         colorsrc: 'rgb'
     });
 
@@ -164,11 +164,11 @@
     var material = new THREE.PointsMaterial( { size: 0.5,color: 0x888888 } );
     var sphere = new THREE.Points( geometry, material );
     */
-    var geometry = new THREE.ConeGeometry( 0.2, 0.2, 32 );
-    var material = new THREE.MeshBasicMaterial( {color: 0x0000ff} );
+    var geometry = new THREE.ConeGeometry( 0.1, 0.1, 32 );
+    var material = new THREE.MeshBasicMaterial( {color: 0x0000ee} );
     var sphere = new THREE.Mesh( geometry, material );
 
-    sphere.rotation.z = -Math.PI / 2;
+    //sphere.rotation.z = -Math.PI / 2;
     sphere.position.set(x, y, z)
     //sphere.rotation.set(new THREE.Vector3( 0, 0, Math.PI / 2))
     scene.addObject(sphere)

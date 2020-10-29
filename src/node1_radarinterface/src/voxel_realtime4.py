@@ -35,7 +35,7 @@ class MySimpleClass(object):
         self.data =[]
         #store per frame after voxalize
         self.voxels = []
-        self.model = load_model('/home/wt/RadHAR/Data/model/LSTM.h5')
+        self.model = load_model('/home/wt/RadHARex/Data/model/LSTM.h5')
         self.test_data = []
         self.finish = 0
         self.predict_result = -1
