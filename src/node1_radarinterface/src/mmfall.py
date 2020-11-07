@@ -12,7 +12,7 @@ from node1_radarinterface.msg import RadarScan
 class MySimpleClass(object):
     def __init__(self):
         self.pcl_pub = rospy.Publisher("/my_pcl_topic", PointCloud2,queue_size = 1)
-        self.sub = rospy.Subscriber('/node1_radarinterface/radar_scan',RadarScan,self.sub_callback)
+        self.sub = rospy.Subscriber('/node1_radarinterface/radar_scan_0',RadarScan,self.sub_callback)
         self.radardata = RadarScan()
 
     def sub_callback(self,msg):

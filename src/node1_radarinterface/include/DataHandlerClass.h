@@ -31,6 +31,8 @@ public:
    //void DataUARTHandler(ros::NodeHandle* nh) : currentBufp(&pingPongBuffers[0]) , nextBufp(&pingPongBuffers[1]) {}
     DataUARTHandler(ros::NodeHandle* nh);
     
+    void setFrameID(char* myFrameID);
+    
     /*User callable function to set the UARTPort*/
     void setUARTPort(char* mySerialPort);
     
@@ -75,6 +77,7 @@ private:
     float max_vel;
     float vvel;
 
+    char* frameID;
     /*Contains the name of the serial port*/
     char* dataSerialPort;
     

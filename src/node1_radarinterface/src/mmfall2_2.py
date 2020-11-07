@@ -11,8 +11,8 @@ from node1_radarinterface.msg import RadarScan
 
 class MySimpleClass(object):
     def __init__(self):
-        self.pcl_pub = rospy.Publisher("/my_pcl_topic", PointCloud2,queue_size = 1)
-        self.sub = rospy.Subscriber('/node1_radarinterface/radar_scan_0',RadarScan,self.sub_callback)
+        self.pcl_pub = rospy.Publisher("/my_pcl_topic2", PointCloud2,queue_size = 1)
+        self.sub = rospy.Subscriber('/node1_radarinterface/radar_scan_1',RadarScan,self.sub_callback)
         self.radardata = RadarScan()
         self.now_framenum = 0
         self.cloud_points = []
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     '''
     Sample code to publish a pcl2 with python
     '''
-    rospy.init_node('pcl2_pub_example')
+    rospy.init_node('pcl2_2_pub_example')
     rospy.loginfo("Initializing sample pcl2 publisher node...")
     #give time to roscore to make the connections
     #rospy.sleep(1.)

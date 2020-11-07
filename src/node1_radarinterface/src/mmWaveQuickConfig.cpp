@@ -19,12 +19,16 @@ int main(int argc, char **argv) {
   } else 
     ROS_INFO("mmWaveQuickConfig: Configuring mmWave device using config file: %s", argv[1]);
   
-  ros::ServiceClient client = nh.serviceClient<node1_radarinterface::mmWaveCLI>("/mmWaveCommSrv/mmWaveCLI");
+  //ros::ServiceClient client = nh.serviceClient<node1_radarinterface::mmWaveCLI>("/mmWaveCommSrv/mmWaveCLI");
+  ros::ServiceClient client = nh.serviceClient<node1_radarinterface::mmWaveCLI>("/mmWaveCLI");
   std::ifstream myParams;
   node1_radarinterface::parameter_parser p;
   //wait for service to become available
-  ros::service::waitForService("/mmWaveCommSrv/mmWaveCLI", 100000); 
-  
+  //ros::service::waitForService("/mmWaveCommSrv/mmWaveCLI", 100000); 
+  ros::service::waitForService("/mmWaveCLI", 10000);
+  //wait 0.5 secs to avoid multi-sensor conflicts
+  ros::Duration(0.5).sleep();
+
   myParams.open(argv[1]);
   
   if (myParams.is_open()) {

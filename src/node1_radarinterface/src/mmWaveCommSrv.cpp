@@ -9,16 +9,26 @@ mmWaveCommSrv::mmWaveCommSrv() {}
 
 void mmWaveCommSrv::onInit()
 {
+   ROS_INFO("mmWaveCommSrv: start");
    ros::NodeHandle private_nh = getPrivateNodeHandle();
+   ros::NodeHandle private_nh2("~"); // follow namespace for multiple sensors
+
+   if (!private_nh.hasParam("command_port"))
+    {
+        ROS_INFO("No param named 'command_port'");
+    }
+
+   private_nh2.getParam("command_port", mySerialPort);
    
-   private_nh.getParam("/node1_radarinterface/command_port", mySerialPort);
+   private_nh2.getParam("command_rate", myBaudRate);
    
-   private_nh.getParam("/node1_radarinterface/command_rate", myBaudRate);
-   
+   ROS_INFO("mmWaveCommSrv: pnh ns = %s", private_nh.getNamespace().c_str());
+   ROS_INFO("mmWaveCommSrv: pnh2 ns = %s", private_nh.getNamespace().c_str());
+
    ROS_INFO("mmWaveCommSrv: command_port = %s", mySerialPort.c_str());
    ROS_INFO("mmWaveCommSrv: command_rate = %d", myBaudRate);
    
-   commSrv = private_nh.advertiseService("mmWaveCLI", &mmWaveCommSrv::commSrv_cb, this);
+   commSrv = private_nh.advertiseService("/mmWaveCLI", &mmWaveCommSrv::commSrv_cb, this);
    
    NODELET_DEBUG("mmWaveCommsrv: Finished onInit function");
 }

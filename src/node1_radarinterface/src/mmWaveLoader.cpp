@@ -11,6 +11,8 @@ int main(int argc, char **argv)
   nodelet::M_string remap(ros::names::getRemappings());
   
   nodelet::V_string nargv;
+
+  ROS_INFO("Loader: start");
   
   manager.load("mmWaveCommSrv", "node1_radarinterface/mmWaveCommSrv", remap, nargv);
   

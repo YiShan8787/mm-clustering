@@ -80,47 +80,111 @@
   {
     
     var camera = document.forms['camera']
-    var x =camera.elements.exampleInputX.value
-    var y =camera.elements.exampleInputY.value
-    var z =camera.elements.exampleInputZ.value
+    var x =parseFloat(camera.elements.exampleInputX.value)
+    var y =parseFloat(camera.elements.exampleInputY.value)
+    var z =parseFloat(camera.elements.exampleInputZ.value)
 
-    var ox =camera.elements.exampleInputoX.value
-    var oy =camera.elements.exampleInputoY.value
-    var oz =camera.elements.exampleInputoZ.value
-    var ow =camera.elements.exampleInputoW.value
+    var ox =parseFloat(camera.elements.exampleInputoX.value)
+    var oy =parseFloat(camera.elements.exampleInputoY.value)
+    var oz =parseFloat(camera.elements.exampleInputoZ.value)
+    var ow =parseFloat(camera.elements.exampleInputoW.value)
     
+    var color = camera.elements.exampleInputcolor.value
+
+    var colorValue = parseInt ( color.replace("#","0x"), 16 )
+    var colored = new THREE.Color( colorValue )
+
+    var q = new THREE.Quaternion(ox,oy,oz,ow)
+    //draw_point(x,y,z,ox,oy,oz,ow,0.5,colored)
+    
+    console.log(q)
     /*
-    var x = 0.107530125429
-    var y = -0.246611268504
-    var z = 0.621048909801
-    var ox = 0.958062370734
-    var oy = 0.0568473372532
-    var oz = -0.264874543048
-    var ow = -0.0934149371141
-    */
+    var x = 0.0769366955335
+    var y = -0.188204475001
+    var z = 0.569669749349
+    var ox = -0.651235853023
+    var oy = 0.724123518945
+    var oz = 0.0915898362405
+    var ow = 0.207721676636
+    
+    
     var q = new THREE.Quaternion(ox,oy,oz,ow)
     var q2 = new THREE.Quaternion()
     q2.setFromAxisAngle(new THREE.Vector3(0,0,1),Math.PI)
     q.multiply( q2 )
-    console.log(q)
-    draw_point(x,y,z,q.x,q.y,q.z,q.w,0.5,0xff0000)
+    */
+    //console.log(q)
+    
+    draw_point(x,y,z,q.x,q.y,q.z,q.w,0.5,colored)
+    
 
     
-    /*
     
+    /*
     var q1 = q
     q2 = new THREE.Quaternion()
     q2.setFromAxisAngle(new THREE.Vector3(0,0,1),Math.PI/2)
-    q2.multiply( q1 )
-    console.log(q2)
+    q1.multiply( q2 )
+    console.log("90 degree:")
+    console.log(q1)
 
     var vector = new THREE.Vector3( x, y, z )
     var axis = new THREE.Vector3( 0, 0, 1 )
     var angle = Math.PI/2 
     vector.applyAxisAngle( axis, angle )
     console.log(vector)
-    draw_point(vector.x,vector.y,vector.z,q2.x,q2.y,q2.z,q2.w,0.5,0x0000ff)
+    
+    draw_point(vector.x,vector.y,vector.z,q1.x,q1.y,q1.z,q1.w,0.5,0x0000ff)
     */
+    
+  }
+
+  function start_transfer() 
+  {
+    
+    var camera = document.forms['transfer']
+    var x =parseFloat(camera.elements.exampletransferX.value)
+    var y =parseFloat(camera.elements.exampletransferY.value)
+    var z =parseFloat(camera.elements.exampletransferZ.value)
+
+    var ox =parseFloat(camera.elements.exampletransferoX.value)
+    var oy =parseFloat(camera.elements.exampletransferoY.value)
+    var oz =parseFloat(camera.elements.exampletransferoZ.value)
+    var ow =parseFloat(camera.elements.exampletransferoW.value)
+
+
+    var q = new THREE.Quaternion(ox,oy,oz,ow)
+    //draw_point(x,y,z,ox,oy,oz,ow,0.5,colored)
+    
+    //console.log(q)
+    /*
+    var x = 0.0769366955335
+    var y = -0.188204475001
+    var z = 0.569669749349
+    var ox = -0.651235853023
+    var oy = 0.724123518945
+    var oz = 0.0915898362405
+    var ow = 0.207721676636
+    
+    
+    var q = new THREE.Quaternion(ox,oy,oz,ow)
+    var q2 = new THREE.Quaternion()
+    q2.setFromAxisAngle(new THREE.Vector3(0,0,1),Math.PI)
+    q.multiply( q2 )
+    */
+    var q = new THREE.Quaternion(ox,oy,oz,ow)
+    var q2 = new THREE.Quaternion()
+    q2.setFromAxisAngle(new THREE.Vector3(0,0,1),Math.PI)
+    q.multiply( q2 )
+    console.log("x:")
+    console.log(x)
+    console.log("y:")
+    console.log(z)
+    console.log("z:")
+    console.log(y)
+    console.log(q)
+    
+    
     
   }
 
@@ -274,7 +338,7 @@
         <!-- camera -->
         
         <div class="row">
-          <button class="btn" onclick="add_camera()" data-toggle="popover" data-placement="right" title="Add Point" data-content="put the camera/radar position at the point"><i class="fa fa-camera" aria-hidden="true"></i></button>
+          <button class="btn" onclick="add_camera()" data-toggle="popover" data-placement="right" title="Add Point" data-content="put the camera/radar position at the point"><i class="fa fa-anchor" aria-hidden="true"></i></button>
         </div>
         
         <div class="row">
@@ -283,6 +347,10 @@
         
         <div class="row">
           <button class="btn" onclick="add_cloud()" data-toggle="popover" data-placement="right" title="Add Cloud" data-content="Add a cloud from a topic"><i class="fa fa-plus" aria-hidden="true"></i></button>
+        </div>
+
+        <div class="row">
+          <button class="btn" onclick="input_transfer()" data-toggle="popover" data-placement="right" title="Transfer" data-content="transfer the camera pose from aprilTag to ros 3d world"><i class="fa fa-sort" aria-hidden="true"></i></button>
         </div>
         
       </div>
@@ -360,31 +428,36 @@
               
               <div class="form-group">
                 <label for="exampleInputX">X</label>
-                <input type="text" class="form-control" id="exampleInputX" placeholder="0">
+                <input type="number" class="form-control" id="exampleInputX" placeholder="0">
               </div>
               <div class="form-group">
                 <label for="exampleInputY">Y</label>
-                <input type="text" class="form-control" id="exampleInputY" placeholder="0">
+                <input type="number" class="form-control" id="exampleInputY" placeholder="0">
               </div>
               <div class="form-group">
                 <label for="exampleInputZ">Z</label>
-                <input type="text" class="form-control" id="exampleInputZ" placeholder="0">
+                <input type="number" class="form-control" id="exampleInputZ" placeholder="0">
               </div>
               <div class="form-group">
                 <label for="exampleInputoX">orientation X</label>
-                <input type="text" class="form-control" id="exampleInputoX" placeholder="0">
+                <input type="number" class="form-control" id="exampleInputoX" placeholder="0">
               </div>
               <div class="form-group">
                 <label for="exampleInputoY">orientation Y</label>
-                <input type="text" class="form-control" id="exampleInputoY" placeholder="0">
+                <input type="number" class="form-control" id="exampleInputoY" placeholder="0">
               </div>
               <div class="form-group">
                 <label for="exampleInputoZ">orientation Z</label>
-                <input type="text" class="form-control" id="exampleInputoZ" placeholder="0">
+                <input type="number" class="form-control" id="exampleInputoZ" placeholder="0">
               </div>
               <div class="form-group">
                 <label for="exampleInputoW">orientation W</label>
-                <input type="text" class="form-control" id="exampleInputoW" placeholder="1">
+                <input type="number" class="form-control" id="exampleInputoW" placeholder="1">
+              </div>
+
+              <div class="form-group">
+                <label for="exampleInputcolor">color</label>
+                <input type="color" id="exampleInputcolor" name="exampleInputcolor"value="#eeeeee">
               </div>
 
             </form>
@@ -432,6 +505,58 @@
         </div>
       </div>
     </div>
+
+    <!-- Modal transfer-->
+    <div class="modal fade" id="transferModal" tabindex="-1" role="dialog" aria-labelledby="transferModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="transferModalLabel">Run the following commands in the terminal then refresh the page</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <form name='transfer'>
+              
+              <div class="form-group">
+                <label for="exampletransferX">X</label>
+                <input type="number" class="form-control" id="exampletransferX" placeholder="0">
+              </div>
+              <div class="form-group">
+                <label for="exampletransferY">Y</label>
+                <input type="number" class="form-control" id="exampletransferY" placeholder="0">
+              </div>
+              <div class="form-group">
+                <label for="exampletransferZ">Z</label>
+                <input type="number" class="form-control" id="exampletransferZ" placeholder="0">
+              </div>
+              <div class="form-group">
+                <label for="exampletransferoX">orientation X</label>
+                <input type="number" class="form-control" id="exampletransferoX" placeholder="0">
+              </div>
+              <div class="form-group">
+                <label for="exampletransferoY">orientation Y</label>
+                <input type="number" class="form-control" id="exampletransferoY" placeholder="0">
+              </div>
+              <div class="form-group">
+                <label for="exampletransferoZ">orientation Z</label>
+                <input type="number" class="form-control" id="exampletransferoZ" placeholder="0">
+              </div>
+              <div class="form-group">
+                <label for="exampletransferoW">orientation W</label>
+                <input type="number" class="form-control" id="exampletransferoW" placeholder="1">
+              </div>
+
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" onclick="start_transfer()" class="btn btn-primary" data-dismiss="modal" >start</button>
+          </div>
+        </div>
+      </div>
+    </div>
   
   </div>
   </ul> 
@@ -455,12 +580,20 @@
         clear_input_cloud()
         $('#cloudModal').modal('show')
     }
+    function input_transfer(){
+        //clear_input_transfer()
+        $('#transferModal').modal('show')
+    }
     function clear_input_camera(){
       $('#cameraModal').find('form')[0].reset();
     }
     function clear_input_cloud(){
       $('#cloudModal').find('form')[0].reset();
     }
+    function clear_input_transfer(){
+      $('#transferModal').find('form')[0].reset();
+    }
+    
     </script>
    
 </body>

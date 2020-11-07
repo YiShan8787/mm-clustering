@@ -52,7 +52,15 @@ Visualization Manager:
       Value: true
     - Class: rviz/Marker
       Enabled: true
-      Marker Topic: /node1_radarinterface/radar_scan_markers
+      Marker Topic: /node1_radarinterface/radar_scan_markers_0
+      Name: Marker
+      Namespaces:
+        "": true
+      Queue Size: 100
+      Value: true
+    - Class: rviz/Marker
+      Enabled: true
+      Marker Topic: /node1_radarinterface/radar_scan_markers_1
       Name: Marker
       Namespaces:
         "": true
@@ -68,7 +76,19 @@ Visualization Manager:
       Value: true
     - Class: rviz/Image
       Enabled: true
-      Image Topic: /usb_webcam/image_raw
+      Image Topic: /radar_0/usb_webcam/image_raw
+      Max Value: 1
+      Median window: 5
+      Min Value: 0
+      Name: Image
+      Normalize Range: true
+      Queue Size: 2
+      Transport Hint: raw
+      Unreliable: false
+      Value: true
+    - Class: rviz/Image
+      Enabled: true
+      Image Topic: /radar_1/usb_webcam/image_raw
       Max Value: 1
       Median window: 5
       Min Value: 0
@@ -82,7 +102,7 @@ Visualization Manager:
   Global Options:
     Background Color: 48; 48; 48
     Default Light: true
-    Fixed Frame: node1_radarinterface_markers
+    Fixed Frame: mmwave_0
     Frame Rate: 30
   Name: root
   Tools:

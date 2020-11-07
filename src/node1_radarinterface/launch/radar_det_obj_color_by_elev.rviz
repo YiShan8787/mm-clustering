@@ -84,7 +84,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: node1_radarinterface_pcl
+    Fixed Frame: mmwave_0
     Frame Rate: 30
   Name: root
   Tools:

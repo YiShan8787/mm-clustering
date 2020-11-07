@@ -30,6 +30,11 @@ DataUARTHandler::DataUARTHandler(ros::NodeHandle* nh) : currentBufp(&pingPongBuf
         nr, nd, ntx, fs/1e6, fc/1e9, BW/1e6, PRI*1e6, tfr*1e3, max_range, vrange, max_vel/2, vvel);
 }
 
+void DataUARTHandler::setFrameID(char* myFrameID)
+{
+    frameID = myFrameID;
+}
+
 /*Implementation of setUARTPort*/
 void DataUARTHandler::setUARTPort(char* mySerialPort)
 {
@@ -445,7 +450,7 @@ void *DataUARTHandler::sortIncomingData( void )
                 // ROS_INFO("publish targets");
                 for(i=0; i<num_TargetIdx; i++)
                 {
-                    radarscan_pub.header.frame_id       = "node1_radarinterface_radarscan";
+                    radarscan_pub.header.frame_id       = frameID;
             	    radarscan_pub.header.stamp          = ros::Time::now();
                     // Original measurement from radar
                     radarscan_pub.range                 = radarscan_cf[i].range;
@@ -744,7 +749,7 @@ void* DataUARTHandler::syncedBufferSwap_helper(void *context)
 
 void DataUARTHandler::visualize(const node1_radarinterface::RadarScan &msg){
     visualization_msgs::Marker marker;
-    marker.header.frame_id = "node1_radarinterface_markers";
+    marker.header.frame_id = frameID;
     marker.header.stamp = ros::Time::now();
     marker.type = visualization_msgs::Marker::SPHERE;
     marker.id = msg.point_id;
