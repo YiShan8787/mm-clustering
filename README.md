@@ -12,3 +12,7 @@ Starting with a working ROS installation (Kinetic is supported):
     cd ~/mmcluster_ws                          # Navigate to the workspace
     rosdep install --from-paths src --ignore-src -r -y  # Install any missing packages
     catkin build    # Build all packages in the workspace (catkin_make_isolated will work also)
+
+# Real Sense
+    
+    https://www.ybliu.com/2020/04/realsense-camera-on-ubuntu.html
