@@ -76,7 +76,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/Image
       Enabled: true
-      Image Topic: /radar_0/usb_webcam/image_raw
+      Image Topic: /camera1/color/image_raw
       Max Value: 1
       Median window: 5
       Min Value: 0
@@ -88,7 +88,7 @@ Visualization Manager:
       Value: true
     - Class: rviz/Image
       Enabled: true
-      Image Topic: /radar_1/usb_webcam/image_raw
+      Image Topic: /camera2/color/image_raw
       Max Value: 1
       Median window: 5
       Min Value: 0
