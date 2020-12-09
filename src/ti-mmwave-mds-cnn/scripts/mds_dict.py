@@ -1,8 +1,11 @@
 mds_dict = {
-    0 : 'Nothing',
-    1 : 'Walking',
-    2 : 'Swing',
-    3 : 'Sitting',
-    #4 : 'Falling',
-    #5 : 'Laying'
+    0 : 'arm_moving',
+    1 : 'boxing',
+    2 : 'jump',
+    3 : 'kick_leg',
+    4 : 'morning_exercise',
+    5 : 'raise',
+    6 : 'run',
+    7 : 'stride',
+    8 : 'swing'
 }

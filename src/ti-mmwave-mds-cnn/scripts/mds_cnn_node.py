@@ -1,11 +1,11 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # Author: Leo Zhang
 
 import rospy
 import numpy as np
 import tensorflow as tf
-from keras.models import model_from_json
-from keras.models import load_model
+from tensorflow.keras.models import model_from_json
+from tensorflow.keras.models import load_model
 import os
 import math
 from micro_doppler_pkg.msg import MicroDoppler_m
@@ -18,14 +18,14 @@ from std_msgs.msg import String
 class mds_cnn_node:
     def __init__(self):
         self.frame_id = 'mds_pred'
-        self.directory = '/home/ece561/FJ/patient_monitoring/ti_ros/src/ti-mmwave-mds-cnn/scripts/output/'#'./output/'
+        self.directory = '/home/wt/RadHARex/Classifiers/doppler/output/'#'./output/'
         
         self.loaded_model = load_model(self.directory+'mds_cnn_model.h5')
-        self.loaded_model._make_predict_function()
-        self.graph = tf.get_default_graph()
-
+        #self.loaded_model._make_predict_function()
+        #self.graph = tf.get_default_graph()
+        #self.graph = tf.compat.v1.get_default_graph()
         self.nd = 64
-        self.time_domain_bins = 20
+        self.time_domain_bins = 10
         self.pre_cur_state = ''
         print('Loaded model from disk.')
 
@@ -33,7 +33,7 @@ class mds_cnn_node:
         #self.serversocket  = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
         rospy.init_node('mds_cnn_node')
-        self.sub_ = rospy.Subscriber('/ti_mmwave/micro_doppler', MicroDoppler_m, self.mds_predictor)
+        self.sub_ = rospy.Subscriber('/ti_mmwave/micro_doppler_0', MicroDoppler_m, self.mds_predictor)
         self.pub_ = rospy.Publisher('/ti_mmwave/mds_pred', MDSPred, queue_size=100)
         self.sevaPublisher = rospy.Publisher('/seva', String, queue_size=100)
         rospy.spin()
@@ -52,8 +52,8 @@ class mds_cnn_node:
             tmp = tmp / max(tmp)
         test_data = tmp.reshape(-1, self.nd, self.time_domain_bins, 1)
 
-        with self.graph.as_default():
-            self.pred = self.loaded_model.predict(test_data)
+        #with self.graph.as_default():
+        self.pred = self.loaded_model.predict(test_data)
             
         cur_state = self.pred_state()
         mds_pred_msg = MDSPred()

@@ -12,13 +12,13 @@ xterm -title "cam Module" -e "roslaunch realsense2_camera rs_multiple_devices.la
 
 sleep 1
 
-xterm -title "doppler 0" -e "cd src/micro_doppler_pkg/scripts; python micro_doppler_0.py"&
+xterm -title "doppler 0" -e "cd src/micro_doppler_pkg/scripts; python micro_doppler_0_10fps.py"&
 
 sleep 1
 
-xterm -title "doppler 0" -e "cd src/micro_doppler_pkg/scripts; python micro_doppler_1.py"&
+xterm -title "doppler 1" -e "cd src/micro_doppler_pkg/scripts; python micro_doppler_1_10fps.py"&
 
 sleep 3
 
-xterm -title "Record Node" -e "cd; cd RadHARex/Data/new_data/left_right_stand; rosbag record -O front.bag --duration=20 /camera1/color/image_raw /camera2/color/image_raw /node1_radarinterface/radar_scan_0 /node1_radarinterface/radar_scan_1 /ti_mmwave/micro_doppler_0 /ti_mmwave/micro_doppler_1"&
+xterm -title "Record Node" -e "cd; cd RadHARex/Data/new_data/kick_leg; rosbag record --duration=21 -O kick_leg_front_2.bag /camera1/color/image_raw /camera2/color/image_raw /node1_radarinterface/radar_scan_0 /node1_radarinterface/radar_scan_1 /ti_mmwave/micro_doppler_0 /ti_mmwave/micro_doppler_1"
 
